@@ -1,0 +1,23 @@
+#game-container {
+    width: 100%;
+    height: 100%;
+
+    #board {
+        display: flex;
+        flex-direction: column;
+        margin: auto;
+        width: 80%;
+
+        .row {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+
+            .sqaure {
+                width: 12px;
+                border: 1px solid #d5d5d5;
+                height: 12px;
+            }
+        }
+    }
+}

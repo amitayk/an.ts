@@ -1,0 +1,25 @@
+<div id="game-container">
+    <div id="board">
+        <div *ngFor="let row of gameBoard" class="row">
+            <ng-container *ngFor="let square of row">
+
+
+                <div class="sqaure" *ngIf='square.display == "foodPile"' style="background-color: gold;">
+                </div>
+
+                <div class="sqaure" *ngIf='square.display == "colony"'
+                    [style.background-color]="square.colony?.color.colonyColor">
+                </div>
+
+                <div class="sqaure" *ngIf='square.display == "ant"' [style.background-color]="square.ant?.color"
+                    [style.border]="square.ant.food?.length ? '1px solid gold' : '1px solid gray'">
+                </div>
+
+                <div class="sqaure" *ngIf='square.display == "none"'>
+                </div>
+
+
+            </ng-container>
+        </div>
+    </div>
+</div>
