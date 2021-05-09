@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AmitaysBotService } from './bots/amitays-bot.service';
+import { RandomBotService } from './bots/random-bot.service';
+import { SimpleBotService } from './bots/simple-bot.service';
 import { CentralService } from './game/central.service';
 
 @Component({
@@ -12,7 +13,7 @@ export class AppComponent {
   title = 'ants';
 
   constructor(private centralService: CentralService,
-    private amitaysBotService: AmitaysBotService
+    private simpleBotService: SimpleBotService
   ) {
   }
 

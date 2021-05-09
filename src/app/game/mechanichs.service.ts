@@ -146,13 +146,21 @@ export class MechanichsService {
 
     if (ant.food) return;
 
-    let foodPile = this.gameBoard[ant.nextAction.nextSquare.x]?.[ant.nextAction.nextSquare.y]?.foodPile;
+    let square = this.gameBoard[ant.nextAction.nextSquare.x]?.[ant.nextAction.nextSquare.y]
+
+    if (!square) return;
+
+    let foodPile = square?.foodPile;
 
     if (!foodPile) return;
 
-    let food = foodPile.getGrain(this._secret);
+    let grainAndData = foodPile.getGrain(this._secret);
 
-    return food;
+    if (grainAndData.grainsLeft == 0) {
+      square.foodPile = null;
+    }
+
+    return grainAndData.grain;
   }
 
   private tryToDropFood(ant: Ant) {

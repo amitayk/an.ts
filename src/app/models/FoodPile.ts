@@ -32,6 +32,6 @@ export class FoodPile {
     public getGrain(secret: string) {
         if (secret != this.secret) return;
         let grain = this.grainsOfFood.pop();
-        return grain;
+        return { grain: grain, grainsLeft: this.grainsOfFood.length };
     }
 }

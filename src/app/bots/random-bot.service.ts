@@ -8,7 +8,7 @@ import { UserTick } from '../models/UserTIck';
 @Injectable({
   providedIn: 'root'
 })
-export class AmitaysBotService {
+export class RandomBotService {
 
   userName: string = "amyu98";
 

@@ -17,9 +17,9 @@ export class CentralService {
 
   //#region config
   private numberOfPlayers = 1;
-  private width = 50;
-  private height = 50;
-  private foodPilesSize = 10;
+  readonly width = 50;
+  readonly height = 50;
+  private foodPilesSize = 1;
   private numberOfFoodPiles = 30;
   private addAntsInTicks = [10, 20, 30, 40, 50];
   //#endregion config
@@ -40,6 +40,7 @@ export class CentralService {
   /** All the colonies of all the bots. */
   private colonies: Colony[] = [];
 
+  // TODO find way to make private.
   readonly gameBoard$: Subject<GameSquare[][]> = new Subject<GameSquare[][]>();
 
   private tickActions: any[] = [];
@@ -201,7 +202,12 @@ export class CentralService {
       id: colony.player + "_" + colony.ants.length,
       lastMoves: [],
       color: colony.color.antsColor,
-      surroundings: []
+      surroundings: [],
+      memory: {
+        bool1: false,
+        bool2: false,
+        smallNubmer: 0
+      }
     }
   }
 
