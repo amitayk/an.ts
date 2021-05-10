@@ -21,6 +21,7 @@ export class CentralService {
   readonly height = 50;
   private foodPilesSize = 1;
   private numberOfFoodPiles = 30;
+  private gameSpeed = 2;
   private addAntsInTicks = [10, 20, 30, 40, 50];
   //#endregion config
 
@@ -116,7 +117,7 @@ export class CentralService {
         // Call for next move.
         setTimeout(() => {
           this.tick()
-        }, 300);
+        }, this.gameSpeed);
 
       }
     })
@@ -197,18 +198,7 @@ export class CentralService {
 
   private createAntFromColony(colony: Colony): Ant {
 
-    return {
-      coordinates: colony.coordinates,
-      id: colony.player + "_" + colony.ants.length,
-      lastMoves: [],
-      color: colony.color.antsColor,
-      surroundings: [],
-      memory: {
-        bool1: false,
-        bool2: false,
-        smallNubmer: 0
-      }
-    }
+    return new  Ant(colony, [])
   }
 
   private createFoodPile(): FoodPile {

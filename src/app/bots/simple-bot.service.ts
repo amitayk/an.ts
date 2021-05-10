@@ -15,30 +15,38 @@ export class SimpleBotService {
   readonly botConfig = {
     numberToDirection: {
 
+      // down-right
       0: ((coords: Coordinates) => {
         return { x: coords.x + 1, y: coords.y + 1 }
       }),
+      // down
       1: ((coords: Coordinates) => {
-        return { x: coords.x - 1, y: coords.y - 1 }
+        return { x: coords.x, y: coords.y + 1 }
       }),
+      // down-left
       2: ((coords: Coordinates) => {
         return { x: coords.x - 1, y: coords.y + 1 }
       }),
+      // left
       3: ((coords: Coordinates) => {
-        return { x: coords.x + 1, y: coords.y - 1 }
+        return { x: coords.x - 1, y: coords.y }
       }),
+      // top-left
       4: ((coords: Coordinates) => {
-        return { x: coords.x, y: coords.y + 1 }
+        return { x: coords.x - 1, y: coords.y - 1 }
       }),
+      // top
       5: ((coords: Coordinates) => {
         return { x: coords.x, y: coords.y - 1 }
       }),
+      // top-right
       6: ((coords: Coordinates) => {
+        return { x: coords.x + 1, y: coords.y - 1 }
+      }),
+      // right
+      7: ((coords: Coordinates) => {
         return { x: coords.x + 1, y: coords.y }
       }),
-      7: ((coords: Coordinates) => {
-        return { x: coords.x - 1, y: coords.y }
-      })
 
     }
   }
@@ -81,26 +89,20 @@ export class SimpleBotService {
     let type: ActionOption;
     let nextMoveSquare: Coordinates;
 
-    let antIndex = +ant.id.split('_')[1];
-    let antFuncIndex = +ant.id.split('_')[1] + ant.memory.smallNubmer;
-
-    // Define basic movement funcs.
-
     let funcsArray = Object.values(this.botConfig.numberToDirection);
 
-    // Main move func.
+    let antIndex = +ant.id.split('_')[1];
+
+    let antFuncIndex = antIndex + ant.smallNumber;
+
+    // Define basic movement funcs.
     let directionMainFunc =
-      funcsArray[(antFuncIndex % funcsArray.length + funcsArray.length) % funcsArray.length]
+      funcsArray[(antFuncIndex + ant.smallNumber) % funcsArray.length];
 
     // Opposite move func. 
-    let directionOppFunc;
+    let directionOppFunc =
+      funcsArray[(antFuncIndex + (funcsArray.length / 2)) % funcsArray.length]
 
-    // Find opposite move func.
-    if (antIndex % 2 == 0) {
-      directionOppFunc = funcsArray[antIndex + 1];
-    } else {
-      directionOppFunc = funcsArray[antIndex - 1];
-    };
 
     // 0 bring food to colony
     if (ant.food?.length) {
@@ -119,33 +121,15 @@ export class SimpleBotService {
         type = "Move";
 
         nextMoveSquare = findMove(true, this.centralService.width, this.centralService.height);
-
-
-        // Circular manner, not relevant.
-        // let directionOppFunc = funcsArray[(+ant.id.split('_')[1] + 1 % funcsArray.length + funcsArray.length) % funcsArray.length]
-
-
-        // Find lastest move.
-        // let lastMoveSqaure = ant.lastMoves.pop();
-
-        // // If memory is relevent, use memory
-        // if (!ant.memory.bool1 && lastMoveSqaure) {
-        //   nextMoveSquare = lastMoveSqaure;
-
-        //   // If memory is empty, or I should avoid memory 
-        // } else {
-        //   nextMoveSquare = ant.surroundings[Math.floor(Math.random() * ant.surroundings.length)].coordinates
-        // }
       }
 
 
     } else {
 
-      ant.memory.bool1 = false;
-
       // 1 pick food
       let foodPileSquare = ant.surroundings.find(s => s.foodPile);
       if (foodPileSquare) {
+        ant.smallNumber = 0;
         type = 'PickFood';
         nextMoveSquare = foodPileSquare.coordinates;
       }
@@ -154,7 +138,6 @@ export class SimpleBotService {
       else {
         type = "Move";
         nextMoveSquare = findMove(false, this.centralService.width, this.centralService.height);
-        // nextMoveSquare = ant.surroundings[Math.floor(Math.random() * ant.surroundings.length)].coordinates
       }
     }
 
@@ -166,32 +149,24 @@ export class SimpleBotService {
     function findMove(directionFlag: boolean, gameWidth: number, gameHeight: number) {
 
       let nextMoveSquareTemp;
-      if (directionFlag) {
-        nextMoveSquareTemp = directionMainFunc(ant.coordinates);
-      } else {
-        nextMoveSquareTemp = directionOppFunc(ant.coordinates);
-      }
 
-      if (nextMoveSquareTemp.x < 0 || nextMoveSquareTemp.x > gameWidth - 1 ||
-        nextMoveSquareTemp.y < 0 || nextMoveSquareTemp.y > gameHeight - 1) {
+      nextMoveSquareTemp = !directionFlag ? directionMainFunc(ant.coordinates) : directionOppFunc(ant.coordinates);
 
-        let nextMoveFunc = funcsArray[antIndex + ant.memory.smallNubmer];
-        if (nextMoveFunc) {
-          nextMoveSquareTemp = nextMoveFunc(ant.coordinates);
-        } else {
-          ant.memory.smallNubmer = 0;
-          nextMoveFunc = funcsArray[0];
-          nextMoveSquareTemp = nextMoveFunc(ant.coordinates);
-        }
-        try {
-          ant.memory.smallNubmer += 3;
-        } catch (error) {
-          ant.memory.smallNubmer = 0
-        }
+      while (isMoveIleagal(nextMoveSquareTemp, gameWidth, gameHeight)) {
+
+        let rnd = Math.random() * 8;
+        ant.smallNumber = Math.floor(rnd) as any;
+
+        nextMoveSquareTemp = funcsArray[ (antFuncIndex + ant.smallNumber) % funcsArray.length](ant.coordinates);
+
       }
 
       return nextMoveSquareTemp;
     }
-  }
 
+    function isMoveIleagal(coords: Coordinates, width: number, height: number) {
+      return coords.x < 0 || coords.x > width - 1 ||
+        coords.y < 0 || coords.y > height - 1;
+    }
+  }
 }

@@ -9,11 +9,38 @@ export class Ant {
 
     coordinates: Coordinates;
 
-    memory: {
-        bool1: Boolean,
-        bool2: Boolean,
-        smallNubmer: 0 | 1 | 2 | 3 | 4 | 5
+    //#region Memory
+    private _bool1?: boolean;
+    public get bool1(): boolean {
+        return this._bool1;
     }
+    public set bool1(v: boolean) {
+        if (v === true || v === false) {
+            this._bool1 = v;
+        }
+    }
+
+    private _bool2?: boolean;
+    public get bool2(): boolean {
+        return this._bool2;
+    }
+    public set bool2(v: boolean) {
+        if (v === true || v === false) {
+            this._bool2 = v;
+        }
+    }
+
+    private _smallNumber?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    public get smallNumber(): 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 {
+        return this._smallNumber;
+    }
+    public set smallNumber(v: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7) {
+        if (![0, 1, 2, 3, 4, 5].includes(v)) return
+        this._smallNumber = v;
+    }
+    //#endregion Memory
+
+    // TODO restrict all values for runtime..
 
     private _lastMoves?: Coordinates[] = [];
 
@@ -38,8 +65,14 @@ export class Ant {
 
     surroundings: GameSquare[] = [];
 
-    constructor(x: number, y: number) {
-        this.coordinates = { x, y };
+    constructor(colony, surroundings) {
+        this.coordinates = colony.coordinates;
+        this.id = colony.player + "_" + colony.ants.length;
+        this.lastMoves = [];
+        this.color = colony.color.antsColor;
+        this.surroundings = [];
+        this._smallNumber = 0;
+        this.surroundings = surroundings;
     }
 
 }
