@@ -35,7 +35,7 @@ export class Ant {
         return this._smallNumber;
     }
     public set smallNumber(v: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7) {
-        if (![0, 1, 2, 3, 4, 5].includes(v)) return
+        if (![0, 1, 2, 3, 4, 5, 6, 7].includes(v)) return
         this._smallNumber = v;
     }
     //#endregion Memory

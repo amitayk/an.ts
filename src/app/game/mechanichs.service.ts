@@ -109,6 +109,10 @@ export class MechanichsService {
       return false;
     }
 
+    let sqaure = this.gameBoard[nextSquare.x][nextSquare.y];
+    if (sqaure.ant || sqaure.colony || sqaure.foodPile) {
+      return false;
+    }
     // TODO need valdaite not stepping on other ant!
 
     return true;

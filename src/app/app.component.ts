@@ -13,7 +13,9 @@ export class AppComponent {
   title = 'ants';
 
   constructor(private centralService: CentralService,
-    private simpleBotService: SimpleBotService
+    private simpleBotService: SimpleBotService,
+    private randomBotService: RandomBotService,
+
   ) {
   }
 

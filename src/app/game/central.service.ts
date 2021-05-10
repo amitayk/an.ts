@@ -16,13 +16,14 @@ import { MechanichsService } from './mechanichs.service';
 export class CentralService {
 
   //#region config
-  private numberOfPlayers = 1;
+  private numberOfPlayers = 2;
   readonly width = 50;
   readonly height = 50;
-  private foodPilesSize = 1;
+  private foodPilesSize = 5;
   private numberOfFoodPiles = 30;
-  private gameSpeed = 2;
+  private gameSpeed = 100;
   private addAntsInTicks = [10, 20, 30, 40, 50];
+  private scoardBoard: { user?: string, score?: number } = {};
   //#endregion config
 
   private grains: string[] = [];
@@ -53,7 +54,7 @@ export class CentralService {
 
     this.mechanichsService.foodArrivedAtColony$.subscribe(foodEvent => {
       console.log("Food arrived! at: " + foodEvent.colony.player + " colony!");
-
+      this.scoardBoard[foodEvent.colony.player]++;
     })
   }
 
@@ -71,6 +72,12 @@ export class CentralService {
     if (this.players.length == this.numberOfPlayers) {
       this.startGame();
     }
+
+    this.scoardBoard[playerRegistration.userName] = 0;
+
+    console.log(playerRegistration.userName + " Has registrated with the color - "
+      + ColorsEnum[this.players.length - 1].colonyColor + "!");
+
 
     return playerRef.clock;
   }
@@ -186,6 +193,9 @@ export class CentralService {
     this.addAnts();
 
     this.tickNumber++;
+    if (this.tickNumber == 3000) {
+      console.log(this.scoardBoard);
+    }
   }
 
   private addAnts() {
@@ -198,7 +208,7 @@ export class CentralService {
 
   private createAntFromColony(colony: Colony): Ant {
 
-    return new  Ant(colony, [])
+    return new Ant(colony, [])
   }
 
   private createFoodPile(): FoodPile {

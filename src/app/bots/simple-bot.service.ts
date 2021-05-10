@@ -3,6 +3,7 @@ import { CentralService } from '../game/central.service';
 import { Action, ActionOption } from '../models/Action';
 import { Ant } from '../models/Ant';
 import { Coordinates } from '../models/Coordinates';
+import { GameSquare } from '../models/GameSquare';
 import { UserTick } from '../models/UserTIck';
 
 @Injectable({
@@ -10,7 +11,7 @@ import { UserTick } from '../models/UserTIck';
 })
 export class SimpleBotService {
 
-  readonly userName: string = "amyu98";
+  readonly userName: string = "simple bot";
 
   readonly botConfig = {
     numberToDirection: {
@@ -97,7 +98,7 @@ export class SimpleBotService {
 
     // Define basic movement funcs.
     let directionMainFunc =
-      funcsArray[(antFuncIndex + ant.smallNumber) % funcsArray.length];
+      funcsArray[(antFuncIndex) % funcsArray.length];
 
     // Opposite move func. 
     let directionOppFunc =
@@ -120,7 +121,15 @@ export class SimpleBotService {
         // Move to:
         type = "Move";
 
-        nextMoveSquare = findMove(true, this.centralService.width, this.centralService.height);
+
+        let rnd = Math.random();
+        if (rnd < 0.2) {
+          let rndNext = [0, 1, 2, 3, 4, 5, 6, 7][(ant.smallNumber + 1) % 8];
+          ant.smallNumber = rndNext as any;
+        }
+
+
+        nextMoveSquare = findMove(false, this.centralService.width, this.centralService.height);
       }
 
 
@@ -152,21 +161,31 @@ export class SimpleBotService {
 
       nextMoveSquareTemp = !directionFlag ? directionMainFunc(ant.coordinates) : directionOppFunc(ant.coordinates);
 
-      while (isMoveIleagal(nextMoveSquareTemp, gameWidth, gameHeight)) {
+      while (isMoveIleagal(nextMoveSquareTemp, ant.surroundings, gameWidth, gameHeight)) {
 
-        let rnd = Math.random() * 8;
-        ant.smallNumber = Math.floor(rnd) as any;
+        // let rnd = Math.random() * 8;
+        // ant.smallNumber = Math.floor(rnd) as any;
+        // let rndNext = [0, 1, 2, 3, 4, 5, 6, 7][(ant.smallNumber + 1) % 8];
 
-        nextMoveSquareTemp = funcsArray[ (antFuncIndex + ant.smallNumber) % funcsArray.length](ant.coordinates);
+        let next = [0, 1, 2, 3, 4, 5, 6, 7][(ant.smallNumber + 1) % 8];
+
+        nextMoveSquareTemp = funcsArray[(antIndex + next) % funcsArray.length](ant.coordinates);
+
+        ant.smallNumber = next as any;
 
       }
 
       return nextMoveSquareTemp;
     }
 
-    function isMoveIleagal(coords: Coordinates, width: number, height: number) {
-      return coords.x < 0 || coords.x > width - 1 ||
-        coords.y < 0 || coords.y > height - 1;
+    function isMoveIleagal(coords: Coordinates, surroundings: GameSquare[], width: number, height: number) {
+      let { x, y } = coords;
+      let surroundingSquare = surroundings.find(s => s.coordinates.x == x && s.coordinates.y == y);
+      return (x < 0 || x > width - 1 ||
+        y < 0 || y > height - 1)
+        || surroundingSquare.ant
+        || surroundingSquare.foodPile
+        || surroundingSquare.colony
     }
   }
 }

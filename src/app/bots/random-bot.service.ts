@@ -10,7 +10,7 @@ import { UserTick } from '../models/UserTIck';
 })
 export class RandomBotService {
 
-  userName: string = "amyu98";
+  userName: string = "random bot";
 
   //#region Deafult bot boiler plate.
   constructor(private centralService: CentralService) {
